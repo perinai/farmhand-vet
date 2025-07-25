@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api/api_service.dart'; // Import the new service
 import 'package:frontend/home/home_screen.dart'; // <-- ADD THIS LINE
 import 'package:frontend/auth/register_screen.dart'; // <-- ADD THIS LINE
+import 'package:frontend/core/secure_storage_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +20,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Create an instance of our ApiService
   final ApiService _apiService = ApiService();
+
+  // Create an instance of our SecureStorageService
+  final SecureStorageService _storageService = SecureStorageService();
 
   // A new variable to track loading state
   bool _isLoading = false;
@@ -53,6 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
       // --- Show the result to the user ---
       // NEW CODE
       if (result['success']) {
+        final accessToken = result['data']['access_token'];
+         await _storageService.saveToken(accessToken);
         // On success, navigate to the HomeScreen.
         // NEW CODE in login_screen.dart
         Navigator.of(context).pushReplacementNamed('/home');

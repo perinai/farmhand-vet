@@ -7,7 +7,7 @@ from typing import List
 
 # Import all our modules so we can use their functions
 from . import crud, models, schemas, security
-from .database import SessionLocal, engine
+from .database import SessionLocal, engine, get_db
 
 # This line tells SQLAlchemy to create all the tables defined in models.py
 # in our database. If they already exist, it does nothing.
@@ -21,12 +21,7 @@ app = FastAPI(title="VetLig API")
 # This is a special function that FastAPI will run for every request that needs it.
 # It creates a new database session for that single request and makes sure
 # it's closed when the request is finished.
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
 
 
 # --- API Endpoints ---
@@ -89,3 +84,12 @@ def read_vets(db: Session = Depends(get_db)):
     """
     vets = crud.get_verified_vets(db)
     return vets
+
+# --- Users Endpoints ---
+
+@app.get("/users/me", response_model=schemas.UserResponse, tags=["Users"])
+def read_users_me(current_user: models.User = Depends(security.get_current_user)):
+    """
+    Get the profile of the currently logged-in user.
+    """
+    return current_user

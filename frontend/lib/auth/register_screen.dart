@@ -17,7 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
 
-  String _selectedUserType = 'farmer'; // Default selection
+  String _selectedUserType = 'farmer';
   bool _isLoading = false;
   final ApiService _apiService = ApiService();
 
@@ -48,7 +48,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Registration Successful! Please log in.'), backgroundColor: Colors.green),
         );
-        // Go back to the login screen after successful registration
         Navigator.of(context).pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +74,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   const Text('Create Your Account', textAlign: TextAlign.center, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 30),
                   
-                  // Form Fields
                   TextFormField(controller: _nameController, decoration: const InputDecoration(labelText: 'Full Name', filled: true, fillColor: Colors.white), validator: (v) => v!.isEmpty ? 'Please enter your name' : null),
                   const SizedBox(height: 16),
                   TextFormField(controller: _emailController, decoration: const InputDecoration(labelText: 'Email', filled: true, fillColor: Colors.white), keyboardType: TextInputType.emailAddress, validator: (v) => v!.isEmpty || !v.contains('@') ? 'Please enter a valid email' : null),
@@ -85,8 +83,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   TextFormField(controller: _passwordController, obscureText: true, decoration: const InputDecoration(labelText: 'Password', filled: true, fillColor: Colors.white), validator: (v) => v!.isEmpty || v.length < 6 ? 'Password must be at least 6 characters' : null),
                   const SizedBox(height: 20),
                   
-                  // User Type Selector
                   const Text('I am a:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  // --- THIS IS THE CORRECTED DROPDOWN ---
                   DropdownButtonFormField<String>(
                     value: _selectedUserType,
                     items: const [
@@ -102,12 +100,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Register Button
                   _isLoading
                       ? const Center(child: CircularProgressIndicator())
                       : ElevatedButton(onPressed: _register, style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)), child: const Text('Register')),
                   
-                  // Login Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

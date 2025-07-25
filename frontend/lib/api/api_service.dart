@@ -2,11 +2,15 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:frontend/core/secure_storage_service.dart'; // <-- ADD THIS
 
 class ApiService {
   // The base URL of our running backend
   // For Windows desktop, we use the real IP address. For Android emulator, it's different.
   static const String _baseUrl = "http://127.0.0.1:8000";
+
+  // ADD A STORAGE SERVICE INSTANCE
+  final SecureStorageService _storage = SecureStorageService();
 
   // --- The Login Function ---
   // This function will take the email and password and send it to the backend.
@@ -107,4 +111,36 @@ class ApiService {
       return [];
     }
   }
+  // --- Get Current User's Profile ---
+  Future<Map<String, dynamic>?> getMe() async {
+      // Read the token from secure storage
+      final token = await _storage.readToken();
+      if (token == null) {
+        print('No token found, cannot fetch profile.');
+        return null;
+      }
+
+      final url = Uri.parse('$_baseUrl/users/me');
+
+      try {
+        final response = await http.get(
+          url,
+          // CRUCIAL: Send the token in the Authorization header
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+        );
+
+        if (response.statusCode == 200) {
+          return json.decode(response.body);
+        } else {
+          print('Failed to load profile: ${response.body}');
+          return null;
+        }
+      } catch (e) {
+        print('Network Error while fetching profile: $e');
+        return null;
+      }
+    } 
 }

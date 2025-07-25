@@ -90,14 +90,33 @@ class VetDetailScreen extends StatelessWidget {
                 foregroundColor: Colors.white,
               ),
             ),
+
             const SizedBox(height: 12),
+            
+            // The NEW and CORRECT "Send Message" button
             ElevatedButton.icon(
-              onPressed: () {
-                // TODO: Implement "Send Message" functionality
-                print('Messaging ${getData('phone_number')}...');
+              onPressed: () async {
+                // Get the phone number, removing any spaces
+                final String phoneNumber = getData('phone_number').replaceAll(' ', '');
+                
+                // Create the SMS URL. The 'sms:' prefix is what tells the OS to open the messaging app.
+                final Uri smsUrl = Uri.parse('sms:$phoneNumber');
+
+                // Check if the device can handle this URL before trying to launch it
+                if (await canLaunchUrl(smsUrl)) {
+                    await launchUrl(smsUrl);
+                } else {
+                    // If it can't launch, show an error message to the user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Could not open messaging app for $phoneNumber'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                }
               },
               icon: const Icon(Icons.message),
-              label: const Text('Send Message'),
+              label: const Text('Send Message'), // <-- Make sure it has the label
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,

@@ -3,8 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/auth/login_screen.dart'; // We will create this file next
 import 'package:frontend/home/home_screen.dart'; // <--- ADD THIS LINE
+import 'package:frontend/core/auth_check_screen.dart';
 
+// NEW CODE
 void main() {
+  // This line is crucial for plugins that need to use platform channels before runApp
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const VetLigApp());
 }
 
@@ -46,9 +50,12 @@ class VetLigApp extends StatelessWidget {
       
       // The first screen the user will see is the LoginScreen
       
-      initialRoute: '/',
+      initialRoute: '/auth_check',
       routes: {
-        '/': (context) => const LoginScreen(),
+        // ADD the route for the check screen
+        '/auth_check': (context) => const AuthCheckScreen(),
+        // RENAME the login route from '/' to '/login'
+        '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
       },
     );
